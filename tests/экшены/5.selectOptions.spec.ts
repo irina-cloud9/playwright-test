@@ -15,7 +15,7 @@ test.describe('Работа с базовыми select элементами', ()
     const countrySelect = page.getByLabel('Страна');
     await expect(countrySelect).toHaveValue('');
 
-    // твой код
+    await countrySelect.selectOption('ru');
     await expect(countrySelect).toHaveValue('ru');
     await expect(page.locator('#country-feedback')).toHaveText('Выбрано: Россия');
   });
@@ -26,8 +26,7 @@ test.describe('Работа с базовыми select элементами', ()
   // 3. Проверить значение и фидбэк
   test('Выбор страны по тексту', async ({ page }) => {
     const countrySelect = page.getByLabel('Страна');
-    // твой код
-
+    await countrySelect.selectOption({ label: 'Германия' });
     await expect(countrySelect).toHaveValue('de');
     await expect(page.locator('#country-feedback')).toHaveText('Выбрано: Германия');
   });
@@ -50,10 +49,9 @@ test.describe('Работа с select multiple', () => {
   test('Множественный выбор по значениям', async ({ page }) => {
     const languagesSelect = page.getByLabel('Языки программирования');
 
-    // твой код
-
-    const selectedOptions = await getSelectedValues(languagesSelect);
-    expect(selectedOptions).toEqual(['js', 'py']);
+    await languagesSelect.selectOption(['js', 'py']);
+    const selectedOptions = await getSelectedValues(languagesSelect); //получение выбранных значений. Вызов кастомной функции, которая возвращает массив выбранных значений/
+    expect(selectedOptions).toEqual(['js', 'py']); //проверяем, что массив содержит точно такие же значения/
     await expect(page.locator('#languages-feedback')).toHaveText('Выбрано: JavaScript, Python');
   });
 });
@@ -70,7 +68,7 @@ test.describe('Продвинутые сценарии работы с select', 
   test('Выбор из группированных опций', async ({ page }) => {
     const carBrandSelect = page.getByLabel('Марка автомобиля');
 
-    // твой код
+    await carBrandSelect.selectOption('toyota');
 
     await expect(carBrandSelect).toHaveValue('toyota');
   });
@@ -83,7 +81,7 @@ test.describe('Продвинутые сценарии работы с select', 
     const dynamicSelect = page.getByLabel('Динамический select');
     await expect(dynamicSelect).toBeVisible({ timeout: 2000 });
 
-    // твой код
+    await dynamicSelect.selectOption({ label: 'Опция 2' });
     await expect(dynamicSelect).toHaveValue('opt2');
   });
 });

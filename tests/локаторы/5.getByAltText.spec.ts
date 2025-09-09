@@ -8,16 +8,16 @@ test.describe('Базовые тесты для getByAltText()', () => {
   // Задание 1: Найди изображение с точным alt-текстом "Красивый пейзаж с горами и озером"
   // Проверь что изображение видимо и имеет правильные размеры
   test('Найти изображение по точному alt-тексту', async ({ page }) => {
-    const landscapeImage = // локатор
-      await expect(landscapeImage).toBeVisible();
+    const landscapeImage = page.getByAltText('Красивый пейзаж с горами и озером');
+    await expect(landscapeImage).toBeVisible();
   });
 
   // Задание 2: Найди логотип компании по alt-тексту
   // Проверь что это действительно логотип (содержит слово "логотип" в alt)
   test('Найти логотип компании', async ({ page }) => {
-    const logo = // локатор
-      await expect(logo).toBeVisible();
-    await expect(logo).toHaveJSProperty('width', 150);
+    const logo = page.getByAltText('Логотип компании ТехноКорп');
+    await expect(logo).toBeVisible(); //Проверка, что логотип видим на странице (пользователь может его увидеть)/
+    await expect(logo).toHaveJSProperty('width', 150); //Проверка JavaScript-свойства: что ширина логотипа равна 150 пикселей/
   });
 });
 
@@ -29,15 +29,15 @@ test.describe('Тесты для динамических изображений
   // Задание 1: Дождись появления динамического изображения и найди его по alt-тексту
   // Проверь что изображение загрузилось с правильными размерами
   test('Найти динамически загруженное изображение', async ({ page }) => {
-    const dynamicImage = // локатор
-      await expect(dynamicImage).toBeVisible({ timeout: 2000 });
+    const dynamicImage = page.getByAltText('Динамически загруженное изображение');
+    await expect(dynamicImage).toBeVisible({ timeout: 2000 });
   });
 
   // Задание 2: Найди все изображения с alt-текстом содержащим слово "иконка"
   // Проверь что найдено как минимум 2 таких изображения
   test('Найти все иконки по частичному alt-тексту', async ({ page }) => {
-    const icons = // локатор
-      await expect(icons).toHaveCount(2);
-    await expect(icons.first()).toBeVisible();
+    const icons = page.getByAltText('иконка'); //Поиск ВСЕХ изображений, у которых в alt-тексте содержится слово "иконка"/
+    await expect(icons).toHaveCount(2); //Проверка, что найдено ровно 2 элемента с таким alt-текстом/
+    await expect(icons.first()).toBeVisible(); //Проверка, что первый из найденных элементов видим на странице/
   });
 });

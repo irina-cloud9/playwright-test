@@ -13,7 +13,7 @@ test.describe('Базовые hover-эффекты', () => {
   test('Hover события логируются', async ({ page }) => {
     const hoverBox = page.getByText('Наведи на меня');
 
-    // твой код
+    await hoverBox.hover();
     await expect(page.locator('#hover-log')).toContainText('Наведение на простой блок');
 
     await page.mouse.move(0, 0);
@@ -37,10 +37,10 @@ test.describe('Всплывающие подсказки', () => {
     const tooltip = page.getByText('Это текст подсказки');
 
     // Проверяем что подсказка изначально скрыта
-    await expect(tooltip).toBeHidden();
+    await expect(tooltip).toBeHidden(); //проверет видимость элемента/
 
     // Наводим курсор
-    // твой код
+    await tooltipTrigger.hover();
 
     // Проверяем появление подсказки
     await expect(tooltip).toBeVisible();
@@ -56,13 +56,13 @@ test.describe('Всплывающие подсказки', () => {
     const tooltipTrigger = page.getByText('Наведи чтобы увидеть подсказку');
     const tooltip = page.getByText('Это текст подсказки');
 
-    const box = await tooltipTrigger.boundingBox();
-    // твой код
+    const box = await tooltipTrigger.boundingBox(); // возвращает геометрические параметры элемента в виде прямоугольника/
+    await tooltipTrigger.hover();
 
     const tooltipBox = await tooltip.boundingBox();
     if (tooltipBox && box) {
       // Проверяем что подсказка выше основного элемента
-      expect(tooltipBox.y).toBeLessThan(box.y);
+      expect(tooltipBox.y).toBeLessThan(box.y); //проверяет, что число меньше чем ожидаемое значение./
 
       // Проверяем центрирование по горизонтали
       expect(Math.abs(tooltipBox.x + tooltipBox.width / 2 - (box.x + box.width / 2))).toBeLessThan(
@@ -84,15 +84,14 @@ test.describe('Выпадающие меню', () => {
   // 4. Проверить что подменю стало видимым
   // 5. Проверить наличие всех пунктов подменю
   test('Hover открывает подменю', async ({ page }) => {
-    const menuItem = page.getByText('Меню 1 Подменю 1.1 Подменю');
+    const menuItem = page.getByText('Меню 1 Подменю 1.1 Подменю'); //это выполняет роль локатора - по чему мы находим элемент!! и потом на него наводим hover и т.д./
     const submenu = page.getByText('Подменю 1.1');
 
     // Проверяем что подменю скрыто
     await expect(submenu).toBeHidden();
 
     // Наводим курсор
-    // твой код
-
+    await menuItem.hover();
     // Проверяем что подменю появилось
     await expect(submenu).toBeVisible();
     await expect(page.getByText('Подменю 1.2')).toBeVisible();
@@ -110,11 +109,11 @@ test.describe('Выпадающие меню', () => {
     const submenu2 = page.getByText('Подменю 2.1');
 
     // Наводим на первое меню
-    // твой код
+    await menuItem1.hover();
     await expect(submenu1).toBeVisible();
 
     // Переходим на второе меню
-    // твой код
+    await menuItem2.hover();
     await expect(submenu1).toBeHidden();
     await expect(submenu2).toBeVisible();
   });
