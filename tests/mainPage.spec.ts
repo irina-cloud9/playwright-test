@@ -10,7 +10,7 @@ interface Elements {
     value: string;
   };
 }
-
+const lightMods = ['light', 'dark'];
 const elements: Elements[] = [
   {
     locator: (page: Page): Locator =>
@@ -107,6 +107,7 @@ const elements: Elements[] = [
 
 test.describe('Тесты главной страницы', () => {
   test.beforeEach(async ({ page }) => {
+    // await page.goto('https://playwright.dev/');
     await page.goto('https://playwright.dev/');
   });
   test('Проверка отображения элементов навигации - хедер', async ({ page }) => {
@@ -145,7 +146,20 @@ test.describe('Тесты главной страницы', () => {
     await page.getByLabel('Switch between dark and light').click();
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
     await page.getByLabel('Switch between dark and light').click();
-    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+    await expect.soft(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  });
+
+  //это группа тестов, у нас два элемента и по ним мы иттерируемся (value передастся стоько раз, сколько у нас записей в []) - сравниваем скриншоты
+  //Данный тест нужно запускать два раза, так как при первом запуск ему не счем сравнивать - нет первого скриншота/
+  //нужно немного передалать!!! Не те скриншоты
+  //Можно так или через переменную вынесенную отдельно - ['light', 'dark'].forEach()/
+  lightMods.forEach((value) => {
+    test(`Проверка стилей активного ${value} мода - скриншотная проверка`, async ({ page }) => {
+      await page.evaluate((value) => {
+        document.querySelector('html')?.setAttribute('data-theme', value);
+      }, value); //сюда передаем value, что бы синтаксис работал корректно/
+      await expect(page).toHaveScreenshot(`PageWith${value}Mode.png`);
+    });
   });
 });
 

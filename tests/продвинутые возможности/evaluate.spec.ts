@@ -10,7 +10,9 @@ test.describe('Практика работы с page.evaluate()', () => {
 
     // ШАГ 1: Получить текущее значение счетчика counter через evaluate
     // Для это используй document.getElementById('counter')?.textContent
-    const counterValue = 'ТВОЙ КОД';
+    const counterValue = await page.evaluate(() => {
+      return document.getElementById('counter')?.textContent;
+    });
 
     // ПРОВЕРКА: Значение счетчика равно "0" при загрузке
     expect(counterValue).toBe('0');
@@ -19,7 +21,9 @@ test.describe('Практика работы с page.evaluate()', () => {
     await page.click('#increment');
 
     // ШАГ 3: Получаем обновленное значение через evaluate с параметром
-    const updatedValue = 'ТВОЙ КОД';
+    const updatedValue = await page.evaluate((selector) => {
+      return document.querySelector(selector)?.textContent;
+    }, '#counter');
 
     // ПРОВЕРКА: Значение увеличилось на 1
     expect(updatedValue).toBe('1');

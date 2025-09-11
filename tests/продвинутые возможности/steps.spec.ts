@@ -20,7 +20,17 @@ test.describe('Тестирование формы регистрации', () =
     // - Сообщения об ошибке и успехе скрыты
     // - Секция профиля не отображается
 
-    test.step();
+    await test.step('ПРЕДУСЛОВИЯ: Проверить начальное состояние формы', async () => {
+      await expect(page.locator('#username')).toBeEmpty();
+      await expect(page.locator('#email')).toBeEmpty();
+      await expect(page.locator('#password')).toBeEmpty();
+
+      await expect(page.locator('#error-message')).toBeHidden();
+      await expect(page.locator('#success-message')).toBeHidden();
+
+      await expect(page.locator('#profile-section')).toBeHidden();
+      await expect(page.locator('#profile-section')).not.toBeVisible();
+    });
 
     // Создай test.step ШАГ 1: Попытка регистрации с пустыми полями
     // В рамках шага выполни проверки
@@ -30,7 +40,17 @@ test.describe('Тестирование формы регистрации', () =
     // - Появилось сообщение о необходимости заполнить все поля
     // - Сообщение об успехе осталось скрытым
 
-    test.step();
+    await test.step('ШАГ 1: Попытка регистрации с пустыми полями', async () => {
+      await page.locator('#register-btn').click();
+
+      await expect(page.locator('#error-message')).toHaveText(
+        'Все поля обязательны для заполнения',
+      );
+      await expect(page.locator('#error-message')).toBeVisible();
+
+      await expect(page.locator('#profile-section')).toBeHidden();
+      await expect(page.locator('#profile-section')).not.toBeVisible();
+    });
 
     // Создай test.step ШАГ 2: Попытка регистрации с некорректными данными
     // В рамках шага выполни проверки
@@ -41,7 +61,18 @@ test.describe('Тестирование формы регистрации', () =
     // Что проверяем:
     // - Соответствующие сообщения об ошибках
 
-    test.step();
+    await test.step('ШАГ 2: Попытка регистрации с некорректными данными', async () => {
+      await page.locator('#username').fill('Irina');
+      await page.locator('#email').fill('irinamail.ru');
+      await page.locator('#password').fill('1');
+
+      await page.locator('#register-btn').click();
+
+      await expect(page.locator('#error-message')).toBeVisible();
+      await expect(page.locator('#error-message')).toHaveText(
+        'Пароль должен быть не менее 6 символов',
+      );
+    });
 
     // Создай test.step ШАГ 3: Успешная регистрация
     // В рамках шага выполни проверки
@@ -52,14 +83,29 @@ test.describe('Тестирование формы регистрации', () =
     // - Появилось сообщение об успехе
     // - Отобразилась секция профиля
 
-    test.step();
+    await test.step('ШАГ 3: Успешная регистрация', async () => {
+      await page.locator('#username').fill('Irina');
+      await page.locator('#email').fill('irina@mail.ru');
+      await page.locator('#password').fill('1234567');
+
+      await page.locator('#register-btn').click();
+
+      await expect(page.locator('#error-message')).toBeHidden();
+      await expect(page.locator('#welcome-user')).toHaveText(/Irina/);
+      await expect(page.locator('#welcome-user')).toBeVisible();
+
+      await expect(page.locator('.profile-section')).toBeVisible();
+    });
 
     // Создай test.step ШАГ 4: Проверка данных профиля
     // В рамках шага выполни проверки
     // Что проверяем:
     // - Данные в профиле соответствуют введенным при регистрации
 
-    test.step();
+    test.step('ШАГ 4: Проверка данных профиля', async () => {
+      await expect(page.locator('#profile-username')).toHaveText(/Irina/);
+      await expect(page.locator('#profile-email')).toHaveText('irina@mail.ru');
+    });
 
     // Создай test.step ШАГ 5: Выход из системы
     // В рамках шага выполни проверки
@@ -68,6 +114,15 @@ test.describe('Тестирование формы регистрации', () =
     // Что проверяем:
     // - Форма регистрации сброшена
     // - Секция профиля скрыта
+
+    await test.step('ШАГ 5: Выход из системы', async () => {
+      await page.locator('#logout-btn').click();
+
+      await expect(page.locator('#profile-section')).toBeHidden();
+      await expect(page.locator('#username')).toBeEmpty();
+      await expect(page.locator('#email')).toBeEmpty();
+      await expect(page.locator('#password')).toBeEmpty();
+    });
   });
 
   // Демонстрационный тест
