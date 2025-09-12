@@ -28,6 +28,32 @@ test.describe('Параметризованные тесты формы вход
   // 4. Нажать кнопку "Войти"
   // 5. Проверить сообщение системы
   // 6. Проверить класс сообщения (success/error)
+
+  test.beforeEach(async ({ page }) => {
+    await page.goto('https://osstep.github.io/parametrize');
+  });
+
+  loginTestCases.forEach((testCase) => {
+    test(`Заполнение формы: ${testCase.expected}`, async ({ page }) => {
+      const { username, password, expected } = testCase;
+
+      // Заполнение формы
+      if (username) {
+        await page.locator('#username').fill(username);
+      }
+      await page.locator('#password').fill(password);
+
+      // Нажать кнопку "Войти"
+      await page.getByRole('button', { name: 'Войти' }).click();
+
+      //Проверить сообщение системы
+      const expectedMessage = page.locator('#message');
+      await expect(expectedMessage).toBeVisible();
+      await expect(expectedMessage).toHaveText(expected);
+      //Проверить класс сообщения (success/error)
+      const expectedClass = expected === 'Успешный вход!' ? 'success' : 'error';
+    });
+  });
 });
 
 // Тесты для калькулятора
@@ -44,4 +70,27 @@ test.describe('Параметризованные тесты калькулят�
   // 3. Ввести второе число
   // 4. Нажать кнопку операции (сложение/умножение)
   // 5. Проверить результат вычисления
+  test.beforeEach(async ({ page }) => {
+    await page.goto('https://osstep.github.io/parametrize');
+  });
+  calculatorTestCases.forEach((testCaseCalcul) => {
+    test(`Проверка работы калькулятора: ${testCaseCalcul.operation} и ${testCaseCalcul.expected}`, async ({
+      page,
+    }) => {
+      const { a, b, operation, expected } = testCaseCalcul;
+
+      //ввод первого и второго числа
+      await page.fill('#num1', a.toString());
+      await page.fill('#num2', b.toString());
+
+      //Нажать кнопку операции (сложение/умножение)
+      const buttonOperashion = operation === 'add' ? '#add-btn' : '#multiply-btn';
+      await page.click(buttonOperashion);
+      // await page.locator(operation).click();
+
+      //Проверить результат вычисления
+      const resultExpected = await page.locator('#result').innerText();
+      expect(resultExpected).toBe(`Результат: ${expected}`);
+    });
+  });
 });
